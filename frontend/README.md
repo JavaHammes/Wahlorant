@@ -1,1 +1,0 @@
-# Whalorant-Frontend
