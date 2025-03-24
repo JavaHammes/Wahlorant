@@ -1,0 +1,33 @@
+apiVersion: skaffold/v2beta29
+kind: Config
+build:
+  artifacts:
+    - image: frontend
+      context: frontend
+      docker:
+        dockerfile: Dockerfile
+    - image: backend
+      context: backend
+      docker:
+        dockerfile: Dockerfile
+deploy:
+  kubectl:
+    manifests:
+      - k8s/mysql-deployment.yaml
+      - k8s/backend-deployment.yaml
+      - k8s/frontend-deployment.yaml
+      - k8s/secrets.yaml
+      - k8s/ingress.yaml
+profiles:
+  - name: dev
+    activation:
+      - command: dev
+    patches:
+      - op: add
+        path: /build/artifacts/0/docker/buildArgs
+        value:
+          ENVIRONMENT: development
+      - op: add
+        path: /build/artifacts/1/docker/buildArgs
+        value:
+          ENVIRONMENT: development
