@@ -3,13 +3,69 @@ kind: Ingress
 metadata:
   name: wahlorant-ingress
   annotations:
+    #############################################
+    # ✅ General Security Settings
+    #############################################
+
+    # Enable support for regular expressions in paths (useful for advanced routing).
     nginx.ingress.kubernetes.io/use-regex: "true"
-    # Rate Limiting / DDOS Protection
-    nginx.ingress.kubernetes.io/limit-rps: "10"  # Requests per second per IP
-    nginx.ingress.kubernetes.io/limit-burst: "20" # Burst size
-    nginx.ingress.kubernetes.io/limit-connections: "50" # Max concurrent connections
-    # Enforce TLS (Deactivated for dev)
+
+    # Hide the NGINX version in response headers to prevent attackers from fingerprinting.
+    nginx.ingress.kubernetes.io/server-tokens: "false"
+
+    #############################################
+    # 🔥 Web Application Firewall (WAF) - ModSecurity
+    #############################################
+
+    # Enable ModSecurity, a Web Application Firewall (WAF) that helps detect and block malicious traffic.
+    nginx.ingress.kubernetes.io/modsecurity-enabled: "true"
+
+    # Load a custom ModSecurity configuration to filter and block attacks like:
+    # - SQL Injection (SQLi) 🛑
+    # - Cross-Site Scripting (XSS) 🛑
+    # - Command Injection (RCE) 🛑
+    # - Local File Inclusion (LFI) 🛑
+    # - Automated scanners & bots 🛑
+    # - Other common web attacks 🚨
+    nginx.ingress.kubernetes.io/modsecurity-snippet: |
+      # Enable the ModSecurity engine to inspect incoming requests and block threats.
+      SecRuleEngine On 
+
+      # Enable request body inspection to detect malicious payloads in POST/PUT requests.
+      SecRequestBodyAccess On  
+
+      # Disable response body inspection (Off by default for better performance). 
+      # Turning this On would allow filtering of server responses.
+      SecResponseBodyAccess Off
+
+      # Load the OWASP Core Rule Set (CRS), a set of pre-configured security rules for ModSecurity.
+      Include /etc/modsecurity/owasp-crs/crs-setup.conf
+      Include /etc/modsecurity/owasp-crs/rules/*.conf
+
+    #############################################
+    # 🚀 Rate Limiting & DDoS Protection
+    #############################################
+
+    # Limit requests per second per IP address (prevents abuse & brute-force attacks).
+    nginx.ingress.kubernetes.io/limit-rps: "10"
+
+    # Allow short bursts of up to 20 requests before enforcing rate limits.
+    nginx.ingress.kubernetes.io/limit-burst: "20"
+
+    # Limit the maximum number of simultaneous connections from a single IP (prevents resource exhaustion).
+    nginx.ingress.kubernetes.io/limit-connections: "50"
+
+    # Restrict the maximum size of incoming requests (prevents large payload attacks & DoS attempts).
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+
+    #############################################
+    # 🔒 Enforce HTTPS (TLS) - Currently Disabled for Development
+    #############################################
+
+    # Prevent automatic HTTPS redirection (only disabled in development mode!).
+    # In production, this should be set to "true" to enforce secure connections.
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
+
 spec:
   rules:
   # Frontend subdomain
