@@ -3,8 +3,13 @@ kind: Ingress
 metadata:
   name: wahlorant-ingress
   annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/use-regex: "true"
+    # Rate Limiting / DDOS Protection
+    nginx.ingress.kubernetes.io/limit-rps: "10"  # Requests per second per IP
+    nginx.ingress.kubernetes.io/limit-burst: "20" # Burst size
+    nginx.ingress.kubernetes.io/limit-connections: "50" # Max concurrent connections
+    # Enforce TLS (Deactivated for dev)
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   rules:
   # Frontend subdomain
