@@ -74,7 +74,9 @@ choco install skaffold -y
 
 9. Nach erfolgreicher Einrichtung können Sie auf folgende Systemkomponenten zugreifen:
 
-   | Komponente | URL | Funktion |
-   |------------|-----|----------|
-   | Frontend | [http://app.wahlorant.localhost/](http://app.wahlorant.localhost/) | Benutzeroberfläche des Wahlsystems |
-   | Backend | [http://api.wahlorant.localhost/api-docs/](http://api.wahlorant.localhost/api-docs/) | API-Dokumentation und Schnittstellen |
+   | Komponente | URL | Funktion                             |
+   |------------|-----|--------------------------------------|
+   | Frontend   | [http://app.wahlorant.localhost/](http://app.wahlorant.localhost/) | Benutzeroberfläche des Wahlsystems   |
+   | Backend    | [http://api.wahlorant.localhost/api-docs/](http://api.wahlorant.localhost/api-docs/) | API-Dokumentation und Schnittstellen |
+   | Adminer    | [http://adminer.wahlorant.localhost/](http://api.wahlorant.localhost/api-docs/) | (Dev Only) Datenbank Administration  |
+
