@@ -2,25 +2,15 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: wahlorant-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   rules:
-  - host: wahlorant.localhost
+  # Frontend subdomain
+  - host: app.wahlorant.localhost
     http:
       paths:
-      - path: /api-docs
-        pathType: Prefix
-        backend:
-          service:
-            name: backend-service
-            port:
-              number: 5000
-      - path: /api
-        pathType: Prefix
-        backend:
-          service:
-            name: backend-service
-            port:
-              number: 5000
       - path: /
         pathType: Prefix
         backend:
@@ -28,3 +18,15 @@ spec:
             name: frontend-service
             port:
               number: 80
+
+  # Backend API subdomain
+  - host: api.wahlorant.localhost
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: backend-service
+            port:
+              number: 5000

@@ -1,5 +1,9 @@
 # Whalorant
 
+Frontend is reachable under: app.wahlorant.localhost
+Backend is reachable under: api.wahlorant.localhost
+
+
 kubectl delete all --all
 kubectl delete ingress --all
 kubectl delete secret --all
