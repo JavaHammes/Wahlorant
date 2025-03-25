@@ -25,6 +25,15 @@ profiles:
   - name: dev
     activation:
       - command: dev
+    deploy:
+      kubectl:
+        manifests:
+          - k8s/db-deployment.yaml
+          - k8s/backend-deployment.yaml
+          - k8s/frontend-deployment.yaml
+          - k8s/secrets.yaml
+          - k8s/ingress.yaml
+          - k8s/adminer-deployment.yaml  # Added Adminer for dev profile
     patches:
       - op: add
         path: /build/artifacts/0/docker/buildArgs

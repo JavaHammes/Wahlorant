@@ -30,3 +30,15 @@ spec:
             name: backend-service
             port:
               number: 5000
+
+  # Adminer subdomain (dev only)
+  - host: adminer.wahlorant.localhost
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: adminer-service
+            port:
+              number: 8080
