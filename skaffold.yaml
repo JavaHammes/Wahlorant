@@ -12,8 +12,11 @@ build:
         dockerfile: Dockerfile
 deploy:
   kubectl:
+    defaultNamespace: default
+    flags:
+      apply: []
     manifests:
-      - k8s/mysql-deployment.yaml
+      - k8s/db-deployment.yaml
       - k8s/backend-deployment.yaml
       - k8s/frontend-deployment.yaml
       - k8s/secrets.yaml

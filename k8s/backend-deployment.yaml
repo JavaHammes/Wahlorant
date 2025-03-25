@@ -22,7 +22,7 @@ spec:
         - containerPort: 5000
         env:
         - name: DB_HOST
-          value: mysql
+          value: db
         - name: DB_PORT
           value: "3306"
         - name: DB_DATABASE
@@ -40,7 +40,6 @@ spec:
             secretKeyRef:
               name: db-secrets
               key: DB_PASSWORD
-        # Add additional environment variables here
         - name: APP_ENV
           value: "dev"
         - name: APP_PORT
@@ -70,3 +69,16 @@ spec:
           requests:
             memory: "256Mi"
             cpu: "250m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  selector:
+    app: backend
+  ports:
+    - port: 5000
+      targetPort: 5000
+  type: ClusterIP
