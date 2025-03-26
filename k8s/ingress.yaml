@@ -3,63 +3,14 @@ kind: Ingress
 metadata:
   name: wahlorant-ingress
   annotations:
-    # Add the ingress class name (Defines that this Ingress should use the Nginx Ingress Controller)
-    kubernetes.io/ingress.class: "nginx"
-
-    #############################################
-    # ✅ General Security Settings
-    #############################################
-
-    # Enable support for regular expressions in URL paths
-    # (Useful for pattern-based routing, e.g., `/api/v[0-9]+/users`)
     nginx.ingress.kubernetes.io/use-regex: "true"
-
-    # Hide the NGINX version in response headers
-    # (Prevents attackers from detecting server details)
-    nginx.ingress.kubernetes.io/server-tokens: "false"
-
-    #############################################
-    # 🔥 Basic Web Application Firewall (WAF) Protection
-    #############################################
-
-    # Enable ModSecurity (WAF) with default rules
-    # (Provides protection against common web attacks)
-    nginx.ingress.kubernetes.io/enable-modsecurity: "true"
-
-    # Enable OWASP Core Rule Set (CRS) for ModSecurity
-    # (Includes rules to block SQL Injection, XSS, etc.)
-    nginx.ingress.kubernetes.io/enable-owasp-core-rules: "true"
-
-    #############################################
-    # 🚀 Rate Limiting & DDoS Protection
-    #############################################
-
-    # Limit requests per second per IP (Prevents brute force attacks)
-    nginx.ingress.kubernetes.io/limit-rps: "10"
-
-    # Allow burst traffic up to 20 requests before enforcing RPS limit
-    nginx.ingress.kubernetes.io/limit-burst: "20"
-
-    # Limit number of concurrent connections per IP (Mitigates slowloris attacks)
-    nginx.ingress.kubernetes.io/limit-connections: "50"
-
-    # Limit the maximum request body size (Prevents large payload DoS)
-    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
-
-    #############################################
-    # 🔒 HTTPS Configuration
-    #############################################
-
-    # Disable HTTPS redirection (Only for development! Enable in production)
+    # Rate Limiting / DDOS Protection
+    nginx.ingress.kubernetes.io/limit-rps: "10"  # Requests per second per IP
+    nginx.ingress.kubernetes.io/limit-burst: "20" # Burst size
+    nginx.ingress.kubernetes.io/limit-connections: "50" # Max concurrent connections
+    # Enforce TLS (Deactivated for dev)
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-
-    # (Optional) Add HSTS for improved security when HTTPS is enabled
-    # nginx.ingress.kubernetes.io/hsts: "true"
-    # nginx.ingress.kubernetes.io/hsts-max-age: "31536000"
-    # nginx.ingress.kubernetes.io/hsts-include-subdomains: "true"
-
 spec:
-  ingressClassName: nginx
   rules:
   # Frontend subdomain
   - host: app.wahlorant.localhost
@@ -96,3 +47,15 @@ spec:
             name: adminer-service
             port:
               number: 8080
+              
+   # Grafana subdomain
+  - host: logs.wahlorant.localhost
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: grafana
+            port:
+              number: 3000
