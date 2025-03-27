@@ -63,58 +63,6 @@ spec:
   rules:
   # Frontend subdomain
   - host: app.wahlorant.localhost
-
-    
-          
-            
-    
-
-          
-          Expand Down
-          
-            
-    
-
-          
-          Expand Up
-    
-    @@ -95,4 +46,16 @@ spec:
-  
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: frontend-service
-            port:
-              number: 80
-  # Backend API subdomain
-  - host: api.wahlorant.localhost
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: backend-service
-            port:
-              number: 5000
-  # Adminer subdomain (dev only)
-  - host: adminer.wahlorant.localhost
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: adminer-service
-            port:
-              number: 8080
-spec:
-  rules:
-  # Frontend subdomain
-  - host: app.wahlorant.localhost
     http:
       paths:
       - path: /
@@ -148,8 +96,8 @@ spec:
             name: adminer-service
             port:
               number: 8080
-              
-   # Grafana subdomain
+
+  # Grafana subdomain
   - host: logs.wahlorant.localhost
     http:
       paths:
