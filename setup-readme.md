@@ -79,4 +79,4 @@ choco install skaffold -y
    | Frontend   | [http://app.wahlorant.localhost/](http://app.wahlorant.localhost/) | Benutzeroberfläche des Wahlsystems   |
    | Backend    | [http://api.wahlorant.localhost/api-docs/](http://api.wahlorant.localhost/api-docs/) | API-Dokumentation und Schnittstellen |
    | Adminer    | [http://adminer.wahlorant.localhost/](http://api.wahlorant.localhost/api-docs/) | (Dev Only) Datenbank Administration  |
-
+   | Logs    | [http://logs.wahlorant.localhost/](http://api.wahlorant.localhost/api-docs/) | (Dev Only) API-Log Monitoring  |
