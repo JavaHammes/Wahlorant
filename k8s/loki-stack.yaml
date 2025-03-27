@@ -1,20 +1,4 @@
 ---
-# Loki Service
-apiVersion: v1
-kind: Service
-metadata:
-  name: loki
-  labels:
-    app: loki
-spec:
-  ports:
-    - port: 3100
-      protocol: TCP
-      targetPort: 3100
-      name: http-metrics
-  selector:
-    app: loki
----
 # Loki ConfigMap
 apiVersion: v1
 kind: ConfigMap
@@ -27,46 +11,31 @@ data:
     server:
       http_listen_port: 3100
       
-    ingester:
-      lifecycler:
-        address: 127.0.0.1
-        ring:
-          kvstore:
-            store: inmemory
-          replication_factor: 1
-        final_sleep: 0s
-      chunk_idle_period: 5m
-      chunk_retain_period: 30s
-      
+    common:
+      path_prefix: /tmp/loki
+      storage:
+        filesystem:
+          chunks_directory: /tmp/loki/chunks
+          rules_directory: /tmp/loki/rules
+      replication_factor: 1
+      ring:
+        kvstore:
+          store: inmemory
+
     schema_config:
       configs:
-        - from: 2020-05-15
+        - from: 2020-10-24
           store: boltdb-shipper
           object_store: filesystem
           schema: v11
           index:
             prefix: index_
             period: 24h
-    
-    storage_config:
-      boltdb_shipper:
-        active_index_directory: /data/loki/index
-        cache_location: /data/loki/index_cache
-        shared_store: filesystem
-      filesystem:
-        directory: /data/loki/chunks
-    
+
     limits_config:
-      enforce_metric_name: false
       reject_old_samples: true
       reject_old_samples_max_age: 168h
-    
-    chunk_store_config:
-      max_look_back_period: 0s
-    
-    table_manager:
-      retention_deletes_enabled: false
-      retention_period: 0s
+
 ---
 # Loki Deployment
 apiVersion: apps/v1
@@ -87,6 +56,11 @@ spec:
       labels:
         app: loki
     spec:
+      securityContext:
+        fsGroup: 10001
+        runAsGroup: 10001
+        runAsNonRoot: true
+        runAsUser: 10001
       containers:
         - name: loki
           image: grafana/loki:2.8.0
@@ -97,8 +71,8 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /etc/loki
-            - name: storage
-              mountPath: /data
+            - name: tmp
+              mountPath: /tmp
           args:
             - -config.file=/etc/loki/loki.yaml
           resources:
@@ -112,8 +86,24 @@ spec:
         - name: config
           configMap:
             name: loki-config
-        - name: storage
+        - name: tmp
           emptyDir: {}
+---
+# Loki Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: loki
+  labels:
+    app: loki
+spec:
+  ports:
+    - port: 3100
+      protocol: TCP
+      targetPort: 3100
+      name: http-metrics
+  selector:
+    app: loki
 ---
 # Promtail ConfigMap
 apiVersion: v1
@@ -131,21 +121,29 @@ data:
     
     clients:
       - url: http://loki:3100/loki/api/v1/push
+        tenant_id: fake
     
     scrape_configs:
-      - job_name: kubernetes-pods
-        kubernetes_sd_configs:
-          - role: pod
-        relabel_configs:
-          - source_labels: [__meta_kubernetes_pod_label_app]
-            action: replace
-            target_label: app
-          - source_labels: [__meta_kubernetes_pod_container_name]
-            action: replace
-            target_label: container
-          - source_labels: [__meta_kubernetes_pod_name]
-            action: replace
-            target_label: pod
+      # Backend-spezifischer Job mit präzisem Pfad
+      - job_name: wahlorant-backend
+        static_configs:
+          - targets:
+              - localhost
+            labels:
+              job: wahlorant-backend
+              app: backend
+              environment: dev
+              service: wahlorant-backend
+              __path__: /var/log/pods/default_backend-*/*/*.log
+      
+      # Alle anderen Kubernetes-Pods (allgemein)
+      - job_name: kubernetes-general
+        static_configs:
+          - targets:
+              - localhost
+            labels:
+              job: kubernetes-pods
+              __path__: /var/log/pods/*/*.log
 ---
 # Promtail DaemonSet
 apiVersion: apps/v1
