@@ -1,4 +1,4 @@
-# Whalorant – Development Setup & Commands
+# Wahlorant – Development Setup & Commands
 
 ## Access the Application
 - Frontend: http://app.wahlorant.localhost
