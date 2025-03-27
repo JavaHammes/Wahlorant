@@ -12,12 +12,11 @@ data:
         url: http://loki:3100
         isDefault: true
         jsonData:
-          maxLines: 1000           # Reduziert für bessere Performance
-          timeout: 60              # Timeout in Sekunden
-          logsVolumeEnabled: false # Volume-Funktion deaktivieren
-        basicAuth: false
+          maxLines: 500
+          timeout: 120
         withCredentials: false
-
+        basicAuth: false
+        
 ---
 apiVersion: v1
 kind: ConfigMap
