@@ -56,7 +56,8 @@ choco install skaffold -y
    ```
    **Hinweis: Lassen Sie dieses Terminal geöffnet und fahren Sie in einem neuen Terminal fort.**
 
-6. Konfigurieren Sie die Umgebungsvariablen durch Umbenennung der Datei `.env.example` zu `.env` im Backend-Verzeichnis.
+6. Konfigurieren Sie die Umgebungsvariablen durch Erstellen einer Kopie der Datei `.env.example` als `.env` im Backend-Verzeichnis.\
+Achten Sie darauf, die Variablen korrekt zu konfigurieren, jenachdem ob Wahlorant als Produktiv- (`production`) oder Entwicklungsumgebung (`development`) laufen soll.
 
 7. Navigieren Sie zum Hauptverzeichnis des Repositories und starten Sie den Entwicklungsprozess:
    ```bash

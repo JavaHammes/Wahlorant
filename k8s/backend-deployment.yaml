@@ -25,6 +25,8 @@ spec:
           value: db
         - name: DB_PORT
           value: "3306"
+        - name: DB_DIALECT
+          value: "mysql"
         - name: DB_DATABASE
           valueFrom:
             secretKeyRef:

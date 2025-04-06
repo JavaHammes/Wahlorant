@@ -44,3 +44,24 @@ profiles:
         path: /build/artifacts/1/docker/buildArgs
         value:
           ENVIRONMENT: development
+  - name: prod
+    activation:
+      - command: prod
+    deploy:
+      kubectl:
+        manifests:
+          - k8s/db-deployment.yaml
+          - k8s/backend-deployment.yaml
+          - k8s/frontend-deployment.yaml
+          - k8s/secrets.yaml
+          - k8s/ingress.yaml
+          - k8s/loki-stack.yaml 
+    patches:
+      - op: add
+        path: /build/artifacts/0/docker/buildArgs
+        value:
+          ENVIRONMENT: production
+      - op: add
+        path: /build/artifacts/1/docker/buildArgs
+        value:
+          ENVIRONMENT: production
