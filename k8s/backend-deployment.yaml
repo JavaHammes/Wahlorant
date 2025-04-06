@@ -15,62 +15,62 @@ spec:
         app: backend
     spec:
       containers:
-      - name: backend
-        image: backend:latest
-        imagePullPolicy: Never
-        ports:
-        - containerPort: 5000
-        env:
-        - name: DB_HOST
-          value: db
-        - name: DB_PORT
-          value: "3306"
-        - name: DB_DIALECT
-          value: "mysql"
-        - name: DB_DATABASE
-          valueFrom:
-            secretKeyRef:
-              name: db-secrets
-              key: DB_NAME
-        - name: DB_USER
-          valueFrom:
-            secretKeyRef:
-              name: db-secrets
-              key: DB_USER
-        - name: DB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: db-secrets
-              key: DB_PASSWORD
-        - name: NODE_ENV
-          value: "development"
-        - name: APP_PORT
-          value: "5000"
-        - name: LOG_DIR
-          value: "logs"
-        - name: JWT_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: db-secrets
-              key: JWT_SECRET
-        - name: JWT_EXPIRY
-          value: "15"
-        - name: DEFAULT_ADMIN
-          value: "WahlorantAdmin"
-        - name: DEFAULT_ADMIN_PW
-          valueFrom:
-            secretKeyRef:
-              name: db-secrets
-              key: DEFAULT_ADMIN_PW
-        - name: VOTINGSTATION_UPDATE_TIME
-          value: "30"
-        resources:
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
+        - name: backend
+          image: backend:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5000
+          env:
+            - name: DB_HOST
+              value: db
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_DIALECT
+              value: "mysql"
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: db-secrets
+                  key: DB_NAME
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-secrets
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secrets
+                  key: DB_PASSWORD
+            - name: NODE_ENV
+              value: "development"
+            - name: APP_PORT
+              value: "5000"
+            - name: LOG_DIR
+              value: "logs"
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: db-secrets
+                  key: JWT_SECRET
+            - name: JWT_EXPIRY
+              value: "15"
+            - name: DEFAULT_ADMIN
+              value: "WahlorantAdmin"
+            - name: DEFAULT_ADMIN_PW
+              valueFrom:
+                secretKeyRef:
+                  name: db-secrets
+                  key: DEFAULT_ADMIN_PW
+            - name: VOTINGSTATION_UPDATE_TIME
+              value: "30"
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
 
 ---
 apiVersion: v1
