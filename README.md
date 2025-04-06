@@ -1,38 +1,82 @@
-# Wahlorant – Development Setup & Commands
+# Installation und Konfiguration des Wahlorant-Systems
 
-## Access the Application
-- Frontend: http://app.wahlorant.localhost
-- Backend: http://api.wahlorant.localhost
+## Systemvoraussetzungen
 
-## Cleanup Kubernetes Resources
-kubectl delete all --all
-kubectl delete ingress --all
-kubectl delete secret --all
-kubectl delete pvc --all
+Zur lokalen Einrichtung des Kubernetes-Clusters benötigen Sie:
 
-## Restart Minikube and Enable Ingress
-minikube stop
-minikube start
-minikube addons enable ingress
+> **Wichtig: Verwenden Sie ein Terminal mit Administratorrechten**
 
-## Start Development with Skaffold
-skaffold dev --profile=dev
+Installieren Sie zunächst Chocolatey über folgenden Befehl
 
-## Enable Network Tunneling
-minikube tunnel
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+```
 
-## Check Kubernetes Resources
-kubectl get svc
-kubectl get pods
-kubectl get ingress
+Anschließend können sie die folgenden erforderlichen Komponenten installieren (Falls nicht bereits auf dem Rechner installiert!):
 
-## Build Docker Images Locally
-cd backend
-docker build -t backend:latest .
+```powershell
+# i. Docker Desktop installieren
+choco install docker-desktop -y
 
-cd ../frontend
-docker build -t frontend:latest .
+# ii. Minikube installieren
+choco install minikube -y
 
-## Restart Deployments
-kubectl rollout restart deployment/backend
-kubectl rollout restart deployment/frontend
+# iii. kubectl installieren
+choco install kubernetes-cli -y
+
+# iiii. Skaffold installieren
+choco install skaffold -y
+```
+
+## Einrichtungsprozess
+
+1. Klonen Sie das Repository mit allen Submodulen:
+   ```bash
+   git clone --recurse-submodules https://github.com/JavaHammes/Wahlorant.git
+   ```
+
+2. Initialisieren Sie die Minikube-Umgebung mit ggf. angemessener Ressourcenzuweisung:
+   ```bash
+   minikube start 
+   ```
+
+3. Verifizieren Sie den aktuellen Status der Minikube-Installation:
+   ```bash
+   minikube status
+   ```
+
+4. Aktivieren Sie den Ingress-Controller für korrektes Routing und Tunneling:
+   ```bash
+   minikube addons enable ingress
+   ```
+
+5. Etablieren Sie eine Tunnel-Verbindung:
+   ```bash
+   minikube tunnel
+   ```
+   **Hinweis: Lassen Sie dieses Terminal geöffnet und fahren Sie in einem neuen Terminal fort.**
+
+6. Konfigurieren Sie die Umgebungsvariablen durch Umbenennung der Datei `.env.example` zu `.env` im Backend-Verzeichnis.
+
+7. Navigieren Sie zum Hauptverzeichnis des Repositories und starten Sie den Entwicklungsprozess:
+   ```bash
+   skaffold dev --profile=dev
+   ```
+
+8. Überprüfen Sie die Kubernetes-Dienste in einem separaten Terminal:
+   ```bash
+   kubectl get svc 
+   kubectl get pods 
+   kubectl get ingress
+   ```
+
+## Systemzugriff
+
+9. Nach erfolgreicher Einrichtung können Sie auf folgende Systemkomponenten zugreifen:
+
+   | Komponente | URL | Funktion                             |
+   |------------|-----|--------------------------------------|
+   | Frontend   | [http://app.wahlorant.localhost/](http://app.wahlorant.localhost/) | Benutzeroberfläche des Wahlsystems   |
+   | Backend    | [http://api.wahlorant.localhost/api-docs/](http://api.wahlorant.localhost/api-docs/) | API-Dokumentation und Schnittstellen |
+   | Adminer    | [http://adminer.wahlorant.localhost/](http://api.wahlorant.localhost/api-docs/) | (Dev Only) Datenbank Administration  |
+   | Logs    | [http://logs.wahlorant.localhost/](http://api.wahlorant.localhost/api-docs/) | (Dev Only) API-Log Monitoring  |
