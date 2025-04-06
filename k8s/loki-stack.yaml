@@ -235,19 +235,6 @@ subjects:
     name: promtail
     namespace: default
 ---
-# Grafana Service
-apiVersion: v1
-kind: Service
-metadata:
-  name: grafana
-spec:
-  ports:
-    - port: 3000
-      targetPort: 3000
-      protocol: TCP
-  selector:
-    app: grafana
----
 # Grafana ConfigMap für Datasources
 apiVersion: v1
 kind: ConfigMap
@@ -264,67 +251,7 @@ data:
         jsonData:
           maxLines: 1000
 ---
-# Grafana Deployment
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: grafana
-  labels:
-    app: grafana
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: grafana
-  template:
-    metadata:
-      labels:
-        app: grafana
-    spec:
-      containers:
-        - name: grafana
-          image: grafana/grafana:latest
-          ports:
-            - containerPort: 3000
-              name: http-grafana
-          env:
-            - name: GF_SECURITY_ADMIN_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: db-secrets
-                  key: DB_ROOT_PASSWORD
-            - name: GF_AUTH_ANONYMOUS_ENABLED
-              value: "true"
-            - name: GF_AUTH_ANONYMOUS_ORG_ROLE
-              value: "Admin"
-            # Default to the dashboard we've created
-            - name: GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH
-              value: "/var/lib/grafana/dashboards/wahlorant-logs.json"
-          volumeMounts:
-            - name: grafana-datasources
-              mountPath: /etc/grafana/provisioning/datasources
-            - name: grafana-dashboard-providers
-              mountPath: /etc/grafana/provisioning/dashboards
-            - name: grafana-dashboards
-              mountPath: /var/lib/grafana/dashboards
-          resources:
-            limits:
-              memory: 512Mi
-              cpu: 500m
-            requests:
-              memory: 256Mi
-              cpu: 250m
-      volumes:
-        - name: grafana-datasources
-          configMap:
-            name: grafana-datasources
-        - name: grafana-dashboard-providers
-          configMap:
-            name: grafana-dashboard-providers
-        - name: grafana-dashboards
-          configMap:
-            name: grafana-dashboards
----
+# Grafana Dashboard Provider ConfigMap
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -612,3 +539,79 @@ data:
       "version": 1,
       "weekStart": ""
     }
+---
+# Grafana Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  labels:
+    app: grafana
+spec:
+  ports:
+    - port: 3000
+      protocol: TCP
+      targetPort: 3000
+  selector:
+    app: grafana
+---
+# Grafana Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  labels:
+    app: grafana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      containers:
+        - name: grafana
+          image: grafana/grafana:latest
+          ports:
+            - containerPort: 3000
+              name: http-grafana
+          env:
+            - name: GF_SECURITY_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secrets
+                  key: DB_ROOT_PASSWORD
+            - name: GF_AUTH_ANONYMOUS_ENABLED
+              value: "true"
+            - name: GF_AUTH_ANONYMOUS_ORG_ROLE
+              value: "Admin"
+            # Default to the dashboard we've created
+            - name: GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH
+              value: "/var/lib/grafana/dashboards/wahlorant-logs.json"
+          volumeMounts:
+            - name: grafana-datasources
+              mountPath: /etc/grafana/provisioning/datasources
+            - name: grafana-dashboard-providers
+              mountPath: /etc/grafana/provisioning/dashboards
+            - name: grafana-dashboards
+              mountPath: /var/lib/grafana/dashboards
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: 500m
+            requests:
+              memory: 256Mi
+              cpu: 250m
+      volumes:
+        - name: grafana-datasources
+          configMap:
+            name: grafana-datasources
+        - name: grafana-dashboard-providers
+          configMap:
+            name: grafana-dashboard-providers
+        - name: grafana-dashboards
+          configMap:
+            name: grafana-dashboards
