@@ -32,7 +32,7 @@ choco install skaffold -y
 
 1. Klonen Sie das Repository mit allen Submodulen:
    ```bash
-   git clone --recurse-submodules https://github.com/JavaHammes/Whalorant.git
+   git clone --recurse-submodules https://github.com/JavaHammes/Wahlorant.git
    ```
 
 2. Initialisieren Sie die Minikube-Umgebung mit ggf. angemessener Ressourcenzuweisung:
